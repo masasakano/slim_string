@@ -1,0 +1,79 @@
+
+= SlimString - Ruby method to slim down UTF-8 character strings
+
+== Summary
+
+Module {SlimString} contains a single method of the same (but
+snake-case) name +SlimString#slim_string+, which offers functionality
+to "slim down" character String, such as truncating extra spaces with many
+options you can select.
+It fully takes into account *UTF-8 characters* like CJK Zenkaku spaces.
+
+The full package of this class is found
+in {Github}[https://github.com/masasakano/slim_string]
+
+== Description
+
+=== How to use it?
+
+1. Simply call it in a full path (it is extended and so you can call it in this way.
+
+  SlimString.slim_string("\nabc\n\n", strip: false) # => "\nabc"
+2. Include in your class/module (or top level), and you can use it without the module name.
+
+  include SlimString
+  slim_string("\nabc\n\n", strip: false) # => "\nabc"
+3. Include it in +String+ class like and you can use it as an instance method.
+
+  class String
+    include SlimString
+  end
+
+  "\nabc\n\n".slim_string(trim: false) # => "\nabc"
+
+=== Options
+
+All options (aka, arguments) are Boolean.
+The given string is processed in this order regardless how you do or
+do not specify them.
+
++delete_newlines+:: (Def: false) Delete all new lines (\f\n\r\v) (maybe useful for Japanese text, unless more than 1 alphabet word are split across 2 lines).
++convert_spaces+:: (Def: false) Convert any sort of spaces (including new lines) into an ASCII space.
++convert_blanks+:: (Def: true) Convert all blanks (=spaces except kind of new lines) into an ASCII space.
++truncate_spaces+:: (Def: false) Truncate any consecutive spaces into one.
++truncate_blanks+:: (Def: true) Truncate any consecutive blanks into (the last) one.
++truncate_triple_newlines+:: (Def: false) Truncate 3 or more consecutive newlines into 2.
++delete_blanks+:: (Def: false) Simply delete all blanks excluding new lines (n.b., "a top" and "atop" are regarded identical.
++strip+:: (Def: true) Ruby strip; strip spaces including new lines at the head and tail.
++trim_blanks+:: (Def: false) strip blanks (but new lines) at the tail.
++trim+:: (Def: true) Trim the tail to strip any spaces including new lines at the tail.
+
+== Install
+
+This script requires {Ruby}[http://www.ruby-lang.org] Version 2.0
+or above.  Also, all this library depends on {SubObject (sub_object)}[https://rubygems.org/gems/sub_object], which you can
+find in RubyGems.
+
+== Developer's note
+
+The source code is maintained also in
+{Github}[https://github.com/masasakano/slim_string] with no intuitive
+interface for annotation but with easily-browsable {ChangeLog}[https://github.com/masasakano/slim_string/blob/master/ChangeLog]
+
+=== Tests
+
+The Ruby codes under the directory <tt>test/</tt> are the test scripts.
+You can run them from the top directory as <tt>ruby test/test_****.rb</tt>
+or simply run <tt>make test</tt> or <tt>rake test</tt>.
+
+== Known bugs and Todo items
+
+* None
+
+
+== Copyright
+
+Author::  Masa Sakano < info a_t wisebabel dot com >
+Versions:: The versions of this package follow Semantic Versioning (2.0.0) http://semver.org/
+License:: MIT
+
