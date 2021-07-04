@@ -5,56 +5,115 @@
 
 Module {SlimString} contains a single method of the same (but
 snake-case) name +SlimString#slim_string+, which offers functionality
-to "slim down" character String, such as truncating extra spaces with many
-options you can select.
-It fully takes into account *UTF-8 characters* like CJK Zenkaku spaces.
+to "slim down" character String, such as truncating extra spaces, with many
+options you can specify.
+It fully takes into account *UTF8 characters* like CJK Zenkaku spaces
+(U+3000).
 
-The full package of this class is found in
+The full package of this module is found in
 {SlimString Ruby Gems page}[http://rubygems.org/gems/slim_string]
 (with document created from source annotation with yard) and
 in {Github}[https://github.com/masasakano/slim_string]
 
 == Description
 
+The main (and only) method +slim_string+ accepts a String (either as the receiver or first
+argument) and returns a slimmed-down String.
+
+In default, the returned String is processed as:
+
+1. all the "weird" spaces like TAB characters are converted into ASCII white spaces (U+0020),
+2. all the consecutive white spaces but new-line characters are truncated into a single white space,
+3. all the consecutive white spaces and new-line characters at the beginning and tail are stripped.
+
+You can specify more *aggressive* or *tamer* processing, specifying
+suitable options (see below).
+
 === How to use it?
 
+First,
+  require 'slim_string'
+
+Then,
+
 1. Simply call it in a full path (it is extended and so you can call it in this way.
+     SlimString.slim_string("\nabc\n\n", strip: false)
+       # => "\nabc"
+2. "include" it in your class/module (or top level), and you can use it without the module name.
+     include SlimString
+     slim_string("\nabc\n\n", strip: false)
+       # => "\nabc"
+3. "include" it in +String+ class like and you can use it as an instance method.
+     class String
+       include SlimString
+     end
+   
+     "\nabc\n\n".slim_string(strip: false)
+       # => "\nabc"
 
-  SlimString.slim_string("\nabc\n\n", strip: false) # => "\nabc"
-2. Include in your class/module (or top level), and you can use it without the module name.
+=== Class constant
 
-  include SlimString
-  slim_string("\nabc\n\n", strip: false) # => "\nabc"
-3. Include it in +String+ class like and you can use it as an instance method.
++DEF_SLIM_OPTIONS+:: Hash containing the default option values. The processing order in +slim_string+ follows that of the keys of this constant.
 
-  class String
-    include SlimString
-  end
-
-  "\nabc\n\n".slim_string(trim: false) # => "\nabc"
-
-=== Options
+=== Options (keyword options)
 
 All options (aka, arguments) are Boolean.
 The given string is processed in this order regardless how you do or
 do not specify them.
 
-+delete_newlines+:: (Def: false) Delete all new lines (\f\n\r\v) (maybe useful for Japanese text, unless more than 1 alphabet word are split across 2 lines).
+Here, the terms *space* and *blank* follows the Ruby Regexp convention,
+i.e., *spaces* are non-visible characters including newlines,
+whereas *blanks* are *spaces* minus new-line characters (\\f\\n\\r\\v; ASCII Formfeed (FF), Linefeed (LF), Carriage Return (CR), Vertical Tab (VT)).
+
++delete_newlines+:: (Def: false) Delete all new lines (\\f\\n\\r\\v) (maybe useful for Japanese text, unless more than 1 alphabet word are split across 2 lines).
 +convert_spaces+:: (Def: false) Convert any sort of spaces (including new lines) into an ASCII space.
 +convert_blanks+:: (Def: true) Convert all blanks (=spaces except kind of new lines) into an ASCII space.
 +truncate_spaces+:: (Def: false) Truncate any consecutive spaces into one.
 +truncate_blanks+:: (Def: true) Truncate any consecutive blanks into (the last) one.
 +truncate_triple_newlines+:: (Def: false) Truncate 3 or more consecutive newlines into 2.
-+delete_blanks+:: (Def: false) Simply delete all blanks excluding new lines (n.b., "a top" and "atop" are regarded identical.
++delete_blanks+:: (Def: false) Simply delete all blanks excluding new lines (n.b., "a top" and "atop" are regarded identical).
 +strip+:: (Def: true) Ruby strip; strip spaces including new lines at the head and tail.
 +trim_blanks+:: (Def: false) strip blanks (but new lines) at the tail.
 +trim+:: (Def: true) Trim the tail to strip any spaces including new lines at the tail.
 
+== Examples
+
+Suppose you include +SlimString+ (see "How to use it?" above for
+detail).
+
+In default (see the beginning of Description):
+
+    s  = "\nab  cd\n ef \t gh \n\n"
+    slim_string(s)
+      # => "ab cd\n ef gh"
+
+To preserve consecutive white spaces, but otherwise as in the default, do:
+
+    slim_string(s, truncate_blanks: false)
+      # => "ab  cd\n ef   gh"
+
+To convert all the newlines into white spaces, but otherwise as in the default, do:
+
+    slim_string(s, convert_spaces: true)
+      # => "ab cd ef gh"
+
+To cancel all the default options and specify your own (n.b., here, Hash#map
+is available in Ruby 2.1 (released in 2013) and above), do as follows, for example. In this
+case, it is identical to Ruby's +String#strip+
+
+    s = " \tA  B \n"
+    to_cancel = DEF_SLIM_OPTIONS.map{|k,v| [k, false]}.to_h
+    slim_string(s, **(to_cancel.merge({strip: true})))
+      # => "A  B"  (== s.strip)
+ 
+where +DEF_SLIM_OPTIONS+ is a class constant +SlimString::DEF_SLIM_OPTIONS+ 
+
+The test suite under +test/+ directory contains many more examples.
+
 == Install
 
-This script requires {Ruby}[http://www.ruby-lang.org] Version 2.0
-or above.  Also, all this library depends on {SubObject (sub_object)}[https://rubygems.org/gems/sub_object], which you can
-find in RubyGems.
+This library requires {Ruby}[http://www.ruby-lang.org] Version 2.0
+or above.
 
 == Developer's note
 
@@ -78,4 +137,6 @@ or simply run <tt>make test</tt> or <tt>rake test</tt>.
 Author::  Masa Sakano < info a_t wisebabel dot com >
 Versions:: The versions of this package follow Semantic Versioning (2.0.0) http://semver.org/
 License:: MIT
+
+----------
 

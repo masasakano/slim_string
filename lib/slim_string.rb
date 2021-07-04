@@ -65,11 +65,8 @@ module SlimString
   #    String class and use it as an instance method, the first
   #    argument is mandatory.
   def slim_string(str=nil, **opts)
-    begin
-      ret = (str || self).dup
-    rescue NoMethodError
-      raise ArgumentError, 'first argument is mandatory and must be String-like.'
-    end
+    ret = (str || self).dup
+    raise ArgumentError, 'first argument is mandatory and must be String-like.' if !ret.respond_to? :gsub!
 
     DEF_SLIM_OPTIONS.merge(opts).each_pair do |ek, tf|
       next if !tf

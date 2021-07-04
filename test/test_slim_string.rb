@@ -69,10 +69,31 @@ class TestSlimStringClass < MiniTest::Test
     ex = "   a\nb\f\vc\r\n "+z*3+"d \r\n\r\n"
     assert_equal ex, slim_string(s,                        convert_blanks: false, truncate_blanks: false, strip: false, trim_blanks: true, trim: false)
 
+    assert_equal s,  slim_string(s, **(DEF_SLIM_OPTIONS.map{|k,v| [k, false]}).to_h)
+    assert_equal s.strip, slim_string(s, **(DEF_SLIM_OPTIONS.map{|k,v| [k, false]}).to_h.merge({strip: true}))
+
     assert_raises(ArgumentError){ slim_string(s, dummy: true) }
 
     assert_equal "a\nb\f\vc\r\n d", s.slim_string()
     assert_equal "a\nb\f\vc\r\n d", SlimString.slim_string(s)
+    assert_raises(ArgumentError){   SlimString.slim_string() }
+  end
+
+  def test_slim_string_in_doc
+    s = " \tA  B \n"
+    assert_equal s.strip, slim_string(s, **(DEF_SLIM_OPTIONS.map{|k,v| [k, false]}).to_h.merge({strip: true}))
+    assert_equal "A  B",  slim_string(s, **(DEF_SLIM_OPTIONS.map{|k,v| [k, false]}).to_h.merge({strip: true}))
+
+    to_cancel = DEF_SLIM_OPTIONS.map{|k,v| [k, false]}.to_h
+    assert_equal s.strip, slim_string(s, **(to_cancel.merge({strip: true})))
+
+    s  = "\nab  cd\n ef \t gh \n\n"
+    ex =   "ab cd\n ef gh"
+    assert_equal ex, slim_string(s)
+    ex =   "ab cd ef gh"
+    assert_equal ex, slim_string(s, convert_spaces: true)
+    ex =   "ab  cd\n ef   gh"
+    assert_equal ex, slim_string(s, truncate_blanks: false)
   end
 end # class TestUnitSlimString < MiniTest::Test
 
