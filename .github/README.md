@@ -9,6 +9,8 @@ String, such as truncating extra spaces with many options you can select. It
 fully takes into account *UTF-8 characters* like CJK Zenkaku spaces.
 
 The full package of this class is found in
+[SlimString Ruby Gems page](http://rubygems.org/gems/slim_string)
+(with document created from source annotation with yard) and
 [Github](https://github.com/masasakano/slim_string)
 
 ## Description
