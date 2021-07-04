@@ -18,25 +18,28 @@ The full package of this class is found in
 1.  Simply call it in a full path (it is extended and so you can call it in
     this way.
 
-
+    ```ruby
     SlimString.slim_string("\nabc\n\n", strip: false) # => "\nabc"
+    ```
 
 1.  Include in your class/module (or top level), and you can use it without
     the module name.
 
-
+    ```ruby
     include SlimString
     slim_string("\nabc\n\n", strip: false) # => "\nabc"
+    ```
 
 1.  Include it in `String` class like and you can use it as an instance
     method.
 
-
+    ```ruby
     class String
       include SlimString
     end
 
     "\nabc\n\n".slim_string(trim: false) # => "\nabc"
+    ```
 
 ### Options
 
@@ -107,7 +110,7 @@ test` or `rake test`.
 <dd>   The versions of this package follow Semantic Versioning (2.0.0)
     http://semver.org/</dd>
 <dt>License</dt>
-<dd>   MI</dd>
+<dd>   MIT</dd>
 </dl>
 
 
